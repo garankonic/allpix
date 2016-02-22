@@ -98,7 +98,7 @@ public:
 	// World
 	G4double GetHalfWorldDX(){return 1000.*mm;};//GetNPixelsX()*GetPixelX();};
 	G4double GetHalfWorldDY(){return 1000.*mm;};//GetNPixelsY()*GetPixelX();};
-	G4double GetHalfWorldDZ(){return 2000.*mm;};//GetPixelZ();};
+	G4double GetHalfWorldDZ(){return 5000.*mm;};//GetPixelZ();};
 
 	G4double GetWorldDX(){return 2.*GetHalfWorldDX();};
 	G4double GetWorldDY(){return 2.*GetHalfWorldDY();};

@@ -45,6 +45,8 @@
 #include "G4GeneralParticleSource.hh"
 #include "G4HEPEvtInterface.hh"
 
+#include "HepMCG4Pythia8Interface.hh"
+
 #include "G4RunManager.hh"
 
 
@@ -89,7 +91,8 @@ AllPixPrimaryGeneratorAction::AllPixPrimaryGeneratorAction(SourceType st)
 	{
 		/* using external MC data */
 		m_gunMessenger = new AllPixPrimaryGeneratorMessenger(this);
-		m_HEPEvt = new G4HEPEvtInterface(G4String("/afs/cern.ch/user/m/mbenoit/scratch0/Full_Tracker_Model/HEPEVT_files/AllPairs3TeV8MeV6Deg.HEPEvt"));
+        //m_HEPEvt = new G4HEPEvtInterface(G4String("/afs/cern.ch/user/m/mbenoit/scratch0/Full_Tracker_Model/HEPEVT_files/AllPairs3TeV8MeV6Deg.HEPEvt"));
+        m_HEPEvt = new HepMCG4Pythia8Interface();
 	}
 
 	// store temporarily the position of incoming particles
@@ -123,7 +126,7 @@ void AllPixPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	}
 
 	if(m_HEPEvt){
-		m_HEPEvt->SetParticlePosition(G4ThreeVector(0.*mm,0.*mm,0.*mm));
+        //m_HEPEvt->SetParticlePosition(G4ThreeVector(0.*mm,0.*mm,0.*mm));
 		m_HEPEvt->GeneratePrimaryVertex(anEvent);
 	}
 

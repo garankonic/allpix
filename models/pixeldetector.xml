@@ -100,7 +100,7 @@
 </pixeldet>
 
 <!-- FEI4 -->
-<pixeldet id="200,201">
+<pixeldet id="200,201,202,203,204,205">
 
 <digitizer>FEI3Standard</digitizer>
 

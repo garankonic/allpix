@@ -3,6 +3,7 @@
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 project(ALLPIX)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR})
 # ROOT
 include(FindROOT.cmake)
 
@@ -29,25 +30,55 @@ else()
 endif()
 
 #----------------------------------------------------------------------------
+# Find HepMC (required package)
+#
+find_package(HepMC REQUIRED)
+
+#----------------------------------------------------------------------------
 # Setup Geant4 include directories and compile definitions
 # Setup include directory for this project
 #
 include(${Geant4_USE_FILE})
 
 #----------------------------------------------------------------------------
+# Find Pythia8 (required package)
+#
+find_package(Pythia8 REQUIRED)
+if(PYTHIA8_FOUND)
+  message(STATUS "G4 Examples: Pythia8 found. --> HepMCEx03 example with Pythia8 enabled.") 
+  add_definitions(-DG4LIB_USE_PYTHIA8) 
+else()
+  message(STATUS "G4 Examples: Pythia8 -- NOT found.") 
+  set(PYTHIA8_LIBRARY "")
+  set(PYTHIA8_HEPMC_LIBRARY "")
+  set(PYTHIA8_HAPDF_LIBRARY "")
+endif()
+
+#set(HEPMC_INCLUDE_DIR "/home/maren/GEANT4/HepMC-2.06.09_install/include")
+
+#----------------------------------------------------------------------------
 # Locate sources and headers for this project
 # NB: headers are included so they will show up in IDEs
 #
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include 
-                    ${Geant4_INCLUDE_DIR})
+                    ${Geant4_INCLUDE_DIR}
+		    ${HEPMC_INCLUDE_DIR}
+                    ${PYTHIA8_INCLUDE_DIR})
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/SelDict.cc ${PROJECT_SOURCE_DIR}/src/*.cc)
 file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
+
+ROOT_GENERATE_DICTIONARY(HepMC include/HepMCG4Classes.hh  LINKDEF include/HepMCG4LinkDef.h )
+add_library(HepMCdict SHARED ${sources} HepMC.cxx)
+target_link_libraries(HepMCdict ${HEPMC_LIBRARIES} ${ROOT_LIBRARIES})
 
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
 add_executable(allpix allpix.cc ${sources} ${headers})
-target_link_libraries(allpix ${Geant4_LIBRARIES} ${ROOT_LIBRARIES})
+target_link_libraries(allpix ${Geant4_LIBRARIES} ${HEPMC_LIBRARIES}
+                       ${PYTHIA8_LIBRARY}
+                       ${PYTHIA8_HEPMC_LIBRARY} ${PYTHIA8_HAPDF_LIBRARY}
+                       HepMCdict ${ROOT_LIBRARIES})
 
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)

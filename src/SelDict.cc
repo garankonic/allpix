@@ -901,8 +901,8 @@ namespace {
     };
     static const char* includePaths[] = {
 "./include",
-"/afs/cern.ch/eng/clic/TBData/software/ROOT6_gcc48_python2.7/geant4/root-6.04.00/include",
-"/afs/cern.ch/user/m/mbenoit/tmp2/allpix/",
+"/home/maren/GEANT4/root_v6.04.12_install/include",
+"/home/maren/GEANT4/beamtelescope/allpix_v1.1/allpix/",
 0
     };
     static const char* fwdDeclCode = 

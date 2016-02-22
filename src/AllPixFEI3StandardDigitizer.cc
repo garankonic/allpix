@@ -139,7 +139,7 @@ AllPixFEI3StandardDigitizer::AllPixFEI3StandardDigitizer(G4String modName, G4Str
 	//////////////////////
 
  	doTrapping =false;
- 	doFullField = true;
+ 	doFullField = false;
 
 
  	////////////////////////////////////
@@ -378,7 +378,7 @@ G4double AllPixFEI3StandardDigitizer::ComputeDriftTimeUniformField(AllPixTracker
 
 G4double AllPixFEI3StandardDigitizer::ComputeDiffusionRMS(G4double tDrift)
 {
-	return TMath::Sqrt(2.*Default_Electron_D*tDrift);
+	return TMath::Sqrt(2.*Default_Electron_D*abs(tDrift));
 
 }
 

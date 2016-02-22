@@ -56,7 +56,7 @@ ReadGeoDescription::ReadGeoDescription(string xmlFile){
 	cout << "Summary: read "<< (int)m_detsGeo.size() << " detectors from xml database " << endl;
 	map<int, AllPixGeoDsc *>::iterator itr = m_detsGeo.begin();
 	for( ; itr != m_detsGeo.end() ; itr++){
-		(*itr).second->Dump();
+    //	(*itr).second->Dump();
 	}
 
 	// keep this pointer

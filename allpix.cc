@@ -56,6 +56,10 @@ using namespace std;
 #include "AllPixEventAction.hh"
 #include "AllPixRun.hh"
 #include "AllPixRunAction.hh"
+#include "AllPixTrackingAction.hh"
+
+#include "FTFP_BERT.hh"
+#include "QGSP_BERT.hh"
 
 // digits, frames
 #include "AllPix_Frames_WriteToEntuple.h"
@@ -133,8 +137,10 @@ int main(int argc, char** argv)
 
 	runManager->SetUserInitialization(detector);
 
-	G4VUserPhysicsList * physics = new AllPixPhysicsList;
-	runManager->SetUserInitialization(physics);
+    //G4VUserPhysicsList * physics = new AllPixPhysicsList;
+    G4VUserPhysicsList* physics = new FTFP_BERT;
+    //physics->DumpList();
+    runManager-> SetUserInitialization(physics);
 
 	// Hits ! --> Ntuple to store hits
 	// creates AllPixRun to analyze hits at the end of event
@@ -146,8 +152,8 @@ int main(int argc, char** argv)
 	runManager->SetUserAction(run_action);
 
 	// Particle gun
-	SourceType st = _GeneralParticleSource;
-	//SourceType st = _HEPEvtInterface;
+    //SourceType st = _GeneralParticleSource;
+    SourceType st = _HEPEvtInterface;
 	AllPixPrimaryGeneratorAction * gen_action = new AllPixPrimaryGeneratorAction(st);
 	runManager->SetUserAction(gen_action);
 
@@ -157,6 +163,9 @@ int main(int argc, char** argv)
 	// Digits ! --> calls Digitize, and makes ntuple to store digits
 	AllPixEventAction * event_action = new AllPixEventAction(run_action);
 	runManager->SetUserAction(event_action);
+
+    AllPixTrackingAction * tracking_action = new AllPixTrackingAction(run_action);
+    runManager->SetUserAction(tracking_action);
 
 	// Initialize G4 kernel
 	//

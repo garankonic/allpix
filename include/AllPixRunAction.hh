@@ -89,6 +89,8 @@ public:
   AllPixRun* ReturnAllPixRun(); //nalipour
 
   AllPixWriteROOTFile** writeROOTFile; //nalipour: To write MC in a ROOT file
+  //map<int,int> track_pdgid;
+  map<int,pair<int,int>> track_pdgid;
   
 private:
 
