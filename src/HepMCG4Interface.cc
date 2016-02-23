@@ -39,6 +39,7 @@
 #include "G4TransportationManager.hh"
 #include "G4PhysicalConstants.hh"
 #include "G4SystemOfUnits.hh"
+#include "AllPixRunAction.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 HepMCG4Interface::HepMCG4Interface()
@@ -73,6 +74,8 @@ void HepMCG4Interface::HepMC2G4(const HepMC::GenEvent* hepmcevt,
 {
    G4cout << "Default units: " << HepMC::Units::name(HepMC::Units::default_momentum_unit())
           << " " << HepMC::Units::name(HepMC::Units::default_length_unit()) << std::endl;
+   G4int trackid=1;
+   AllPixRunAction* event_act = (AllPixRunAction*)G4RunManager::GetRunManager()->GetUserRunAction();
    for(HepMC::GenEvent::vertex_const_iterator vitr= hepmcevt->vertices_begin();
        vitr != hepmcevt->vertices_end(); ++vitr ) { // loop for vertex ...
 
@@ -84,10 +87,14 @@ void HepMCG4Interface::HepMC2G4(const HepMC::GenEvent* hepmcevt,
 
       if (!(*pitr)->end_vertex() && (*pitr)->status()==1) {
         qvtx=true;
+        //G4cout<<"!! vertex,pdg: "<<(*pitr)->pdg_id()<<G4endl;
         break;
       }
     }
     if (!qvtx) continue;
+
+    HepMC::GenVertex::particles_in_const_iterator pitr=(*vitr)->particles_in_const_begin ();
+    G4int mother = (*pitr)->pdg_id();
 
     // check world boundary
     HepMC::FourVector pos= (*vitr)-> position();
@@ -110,6 +117,9 @@ void HepMCG4Interface::HepMC2G4(const HepMC::GenEvent* hepmcevt,
       G4LorentzVector p(pos.px(), pos.py(), pos.pz(), pos.e());
       G4PrimaryParticle* g4prim=
         new G4PrimaryParticle(pdgcode, p.x()*MeV, p.y()*MeV, p.z()*MeV);
+      //G4cout<<"!!!!!!!!! code is:"<<g4prim->GetPDGcode()<<" mother is:"<<mother<<G4endl;
+      event_act->track_pdgid.insert(make_pair(trackid,make_pair(pdgcode,mother)));
+      trackid++;
 
       g4vtx-> SetPrimary(g4prim);
     }

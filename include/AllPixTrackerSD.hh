@@ -48,6 +48,7 @@ class G4Step;
 class G4HCofThisEvent;
 class G4Event;
 class AllPixGeoDsc;
+class AllPixRunAction;
 
 #define MAX_CHAMBERS_EPIX 20
 
@@ -79,6 +80,8 @@ private:
   bool firstStrikePrimary;
   G4double _kinEPrimary;
   G4double _totalEdep;
+  AllPixRunAction* event_act;
+  std::map<int,pair<int,int>>::iterator it;
 
   // used to dump tracking info in special cases
   long m_globalTrackId_Dump;

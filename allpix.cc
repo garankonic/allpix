@@ -137,8 +137,8 @@ int main(int argc, char** argv)
 
 	runManager->SetUserInitialization(detector);
 
-    //G4VUserPhysicsList * physics = new AllPixPhysicsList;
-    G4VUserPhysicsList* physics = new FTFP_BERT;
+    G4VUserPhysicsList * physics = new AllPixPhysicsList;
+    //G4VUserPhysicsList* physics = new FTFP_BERT;
     //physics->DumpList();
     runManager-> SetUserInitialization(physics);
 
@@ -164,8 +164,8 @@ int main(int argc, char** argv)
 	AllPixEventAction * event_action = new AllPixEventAction(run_action);
 	runManager->SetUserAction(event_action);
 
-    AllPixTrackingAction * tracking_action = new AllPixTrackingAction(run_action);
-    runManager->SetUserAction(tracking_action);
+    /*AllPixTrackingAction * tracking_action = new AllPixTrackingAction(run_action);
+    runManager->SetUserAction(tracking_action);*/
 
 	// Initialize G4 kernel
 	//
