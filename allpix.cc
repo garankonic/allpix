@@ -137,8 +137,8 @@ int main(int argc, char** argv)
 
 	runManager->SetUserInitialization(detector);
 
-    G4VUserPhysicsList * physics = new AllPixPhysicsList;
-    //G4VUserPhysicsList* physics = new FTFP_BERT;
+    //G4VUserPhysicsList * physics = new AllPixPhysicsList;
+    G4VUserPhysicsList* physics = new FTFP_BERT;
     //physics->DumpList();
     runManager-> SetUserInitialization(physics);
 

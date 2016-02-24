@@ -79,6 +79,7 @@
 //#include "HadronPhysicsQGSP_FTFP_BERT.hh"
 //#include "HadronPhysicsQGS_BIC.hh"
 
+#include "G4HadronPhysicsFTFP_BERT.hh"
 #include "G4EmCompPhotoEPhysics.hh"
 
 #include "G4IonPhysics.hh"
@@ -222,6 +223,10 @@ void AllPixPhysicsList::AddAllPixPhysicsList(const G4String& name)
 
     AddAllPixPhysicsList("emstandard_opt2");
     AddAllPixPhysicsList("FTFP_BERT");
+
+  } else if (name == "FTFP_BERT") {
+
+      hadronPhys.push_back(new G4HadronPhysicsFTFP_BERT());
 
   }
 
