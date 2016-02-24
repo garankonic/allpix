@@ -52,13 +52,16 @@
 
 G4Pythia8Decayer::G4Pythia8Decayer()
   : G4VExtDecayer("G4Pythia8Decayer"),
+    fPythia8(new G4Pythia8()),
     fMessenger(this),
-    fVerboseLevel(0),
-    fDecayProductsArray(0)
+    fVerboseLevel(0)
 {
 /// Standard constructor
 
-  fDecayProductsArray = new ParticleVector();
+  fPythia8->Pythia8()->readString("HardQCD:hardccbar = on");
+  fPythia8->Pythia8()->readString("4122:onMode = off");
+  fPythia8->Pythia8()->readString("4122:onIfMatch = 3122 211");
+  fPythia8->Pythia8()->init();
   
 }
 
@@ -68,7 +71,7 @@ G4Pythia8Decayer::~G4Pythia8Decayer()
 {
 /// Destructor
 
-  delete fDecayProductsArray;
+  delete fPythia8;
 }
 
 //
@@ -79,12 +82,12 @@ G4Pythia8Decayer::~G4Pythia8Decayer()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 G4ParticleDefinition* G4Pythia8Decayer::
-GetParticleDefinition(const Pythia8Particle* particle, G4bool warn) const
+GetParticleDefinition(const Pythia8::Particle* particle, G4bool warn) const
 {
 /// Return G4 particle definition for given TParticle
 
   // get particle definition from G4ParticleTable
-  G4int pdgEncoding = particle->fKF;
+  G4int pdgEncoding = particle->id();
   G4ParticleTable* particleTable 
     = G4ParticleTable::GetParticleTable();                
   G4ParticleDefinition* particleDefinition = 0;    
@@ -97,7 +100,7 @@ GetParticleDefinition(const Pythia8Particle* particle, G4bool warn) const
       << "G4ParticleTable::FindParticle() for particle with PDG = " 
       << pdgEncoding 
       << " failed." << std::endl;
-  }        
+  }
   
   return particleDefinition;
 }
@@ -105,7 +108,7 @@ GetParticleDefinition(const Pythia8Particle* particle, G4bool warn) const
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 G4DynamicParticle*
-G4Pythia8Decayer::CreateDynamicParticle(const Pythia8Particle* particle) const
+G4Pythia8Decayer::CreateDynamicParticle(const Pythia8::Particle* particle) const
 { 
 /// Create G4DynamicParticle.
 
@@ -126,86 +129,52 @@ G4Pythia8Decayer::CreateDynamicParticle(const Pythia8Particle* particle) const
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 G4ThreeVector G4Pythia8Decayer::GetParticlePosition(
-                                   const Pythia8Particle* particle) const
+                                   const Pythia8::Particle* particle) const
 {
 /// Return particle vertex position.
 
   G4ThreeVector position 
-     = G4ThreeVector(particle->fVx * cm,
-                     particle->fVy * cm,
-                     particle->fVz * cm);
+     = G4ThreeVector(particle->xProd() * mm,
+                     particle->yProd() * mm,
+                     particle->zProd() * mm);
   return position;
 }                       
                         
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 G4ThreeVector G4Pythia8Decayer::GetParticleMomentum(
-                                   const Pythia8Particle* particle) const
+                                   const Pythia8::Particle* particle) const
 {
 /// Return particle momentum.
 
   G4ThreeVector momentum 
-     = G4ThreeVector(particle->fPx * GeV,
-                     particle->fPy * GeV,
-                     particle->fPz * GeV);
+     = G4ThreeVector(particle->px() * GeV,
+                     particle->py() * GeV,
+                     particle->pz() * GeV);
   return momentum;
-}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-G4int G4Pythia8Decayer::CountProducts(G4int channel, G4int particle)
-{
-/// Count number of decay products
-
-   G4int np = 0;
-   for ( G4int i=1; i<=5; i++ ) 
-      if ( std::abs(Pythia8::Instance()->GetKFDP(channel,i) ) == particle )
-        np++;
-   return np;
-}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-void
-G4Pythia8Decayer::ForceParticleDecay(G4int particle, G4int product, G4int mult)
-{
-/// Force decay of particle into products with multiplicity mult
-
-   Pythia8* Pythia8 = Pythia8::Instance();
-
-   G4int kc =  Pythia8->Pycomp(particle);
-   Pythia8->SetMDCY(kc,1,1);
-
-   G4int ifirst = Pythia8->GetMDCY(kc,2);
-   G4int ilast  = ifirst + Pythia8->GetMDCY(kc,3)-1;
-
-   //
-   //  Loop over decay channels
-   for (G4int channel= ifirst; channel <= ilast; channel++) {
-      if (CountProducts(channel,product) >= mult) {
-         Pythia8->SetMDME(channel,1,1);
-      } else {
-         Pythia8->SetMDME(channel,1,0);
-      }
-   }
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void G4Pythia8Decayer::Decay(G4int pdg, const CLHEP::HepLorentzVector& p)
 {
-/// Decay a particle of type IDPART (PDG code) and momentum P.
-
-   Pythia8::Instance()->Py1ent(0, pdg, p.e(), p.theta(), p.phi());
+    ClearEvent();
+    AppendParticle(pdg, p);
+    G4int idPart = fPythia8->Pythia8()->event[0].id();
+    fPythia8->Pythia8()->particleData.mayDecay(idPart,true);
+    fPythia8->Pythia8()->moreDecays();
+    if (fVerboseLevel > 0) fPythia8->EventListing();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4int G4Pythia8Decayer::ImportParticles(ParticleVector* particles)
+void G4Pythia8Decayer::AppendParticle(G4int pdg, const CLHEP::HepLorentzVector& p)
 {
-/// Get the decay products into the passed PARTICLES vector
-
-   return Pythia8::Instance()->ImportParticles(particles,"All");
+    fPythia8->Pythia8()->event.append(pdg, 11, 0, 0, p.px(), p.py(), p.pz(), p.e(), p.m());
+}
+void G4Pythia8Decayer::ClearEvent()
+{
+    fPythia8->Pythia8()->event.clear();
 }
 
 //
@@ -237,26 +206,27 @@ G4DecayProducts* G4Pythia8Decayer::ImportDecayProducts(const G4Track& track)
   // let Pythia8Decayer decay the particle
   // and import the decay products
   Decay(pdgEncoding, p);
-  G4int nofParticles = ImportParticles(fDecayProductsArray);
+  G4int nofParticles = fPythia8->GetN();
   
   if ( fVerboseLevel > 0 ) {
     G4cout << "nofParticles: " <<  nofParticles << G4endl;
   }  
 
-  // convert decay products Pythia8Particle type
+  // convert decay products Pythia8::Particle type
   // to G4DecayProducts  
   G4DecayProducts* decayProducts
     = new G4DecayProducts(*(track.GetDynamicParticle()));
 
   G4int counter = 0;
-  for (G4int i=0; i<nofParticles; i++) {
+  for (G4int i=1; i<=nofParticles; i++) {
 
     // get particle from ParticleVector
-    Pythia8Particle* particle = (*fDecayProductsArray)[i];
+    Pythia8::Particle* particle = &(fPythia8->Pythia8()->event[i]);
       
-    G4int status = particle->fKS;
-    G4int pdg = particle->fKF;
-    if ( status>0 && status<11 && 
+    G4int status = particle->status();
+    G4int mother = particle->mother1();
+    G4int pdg = particle->id();
+    if ( /*status>0 &&*/ mother==0 &&
          std::abs(pdg)!=12 && std::abs(pdg)!=14 && std::abs(pdg)!=16 ) {
       // pass to tracking final particles only;
       // skip neutrinos

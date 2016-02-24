@@ -57,6 +57,7 @@ using namespace std;
 #include "AllPixRun.hh"
 #include "AllPixRunAction.hh"
 #include "AllPixTrackingAction.hh"
+#include "AllPixExtDecayerPhysics.hh"
 
 #include "FTFP_BERT.hh"
 #include "QGSP_BERT.hh"
@@ -138,7 +139,9 @@ int main(int argc, char** argv)
 	runManager->SetUserInitialization(detector);
 
     //G4VUserPhysicsList * physics = new AllPixPhysicsList;
-    G4VUserPhysicsList* physics = new FTFP_BERT;
+    G4VModularPhysicsList* physics = new FTFP_BERT;
+    physics->RegisterPhysics(new AllPixExtDecayerPhysics());
+    //physics->SetVerboseLevel(2);
     //physics->DumpList();
     runManager-> SetUserInitialization(physics);
 

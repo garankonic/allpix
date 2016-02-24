@@ -77,6 +77,8 @@ AllPixTrackerSD::AllPixTrackerSD(G4String name,
 	firstStrikePrimary = false;
 	_totalEdep = 0;
 
+    event_act = (AllPixRunAction*)G4RunManager::GetRunManager()->GetUserRunAction();
+
 }
 /*
  * Second constructor for sensitive devices which are
@@ -98,6 +100,8 @@ AllPixTrackerSD::AllPixTrackerSD(G4String name, G4ThreeVector absPos, G4Rotation
 
 	m_globalTrackId_Dump = 0;
 	_totalEdep = 0;
+
+    event_act = (AllPixRunAction*)G4RunManager::GetRunManager()->GetUserRunAction();
 
 }
 
@@ -253,7 +257,16 @@ G4bool AllPixTrackerSD::ProcessHits(G4Step * aStep, G4TouchableHistory *)
 	AllPixTrackerHit * newHit = new AllPixTrackerHit();
 	//newHit->SetDetId(atoi(detId_S.c_str()));
 	newHit->SetTrackID(aTrack->GetTrackID());
-	newHit->SetParentID(aTrack->GetParentID());
+
+    it = event_act->track_pdgid.find(aTrack->GetParentID());
+    if(it!=event_act->track_pdgid.end()) {
+            newHit->SetParentID(it->second.first);
+        }
+        else {
+            newHit->SetParentID(0);
+        }
+
+    //newHit->SetParentID(aTrack->GetParentID());
 	newHit->SetPixelNbX(copyIDx_pre);
 	newHit->SetPixelNbY(copyIDy_pre);
 	newHit->SetPostPixelNbX(copyIDx_post);

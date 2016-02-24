@@ -103,10 +103,10 @@ void G4Pythia8DecayerMessenger::SetNewValue(G4UIcommand* command,
     fPythia8Decayer
       ->SetVerboseLevel(fVerboseCmd->GetNewIntValue(newValue)); 
   }   
-  else if(command == fDecayTypeCmd) { 
+  /*else if(command == fDecayTypeCmd) {
     fPythia8Decayer
       ->ForceDecayType(EDecayType(fDecayTypeCmd->GetNewIntValue(newValue))); 
-  }   
+  }*/
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

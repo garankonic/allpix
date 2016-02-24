@@ -72,7 +72,7 @@ void AllPixExtDecayerPhysics::ConstructProcess()
 
   // Create Geant4 external decayer
   G4Pythia8Decayer* extDecayer = new G4Pythia8Decayer();
-  extDecayer->SetVerboseLevel(1); 
+  extDecayer->SetVerboseLevel(1);
      // The extDecayer will be deleted in G4Decay destructor
 
   aParticleIterator->reset();
@@ -82,7 +82,7 @@ void AllPixExtDecayerPhysics::ConstructProcess()
     G4ProcessManager* pmanager = particle->GetProcessManager();
     
     if ( verboseLevel > 1 ) {
-      G4cout << "Setting ext decayer for: " 
+      G4cout << "!!! Setting ext decayer for: "
              <<  aParticleIterator->value()->GetParticleName() 
              << G4endl;
     } 

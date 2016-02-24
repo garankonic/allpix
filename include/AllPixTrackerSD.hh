@@ -39,6 +39,7 @@
 #include "G4VSensitiveDetector.hh"
 #include "AllPixTrackerHit.hh"
 #include "G4WrapperProcess.hh"
+#include "AllPixRunAction.hh"
 
 #include <set>
 
@@ -79,6 +80,9 @@ private:
   bool firstStrikePrimary;
   G4double _kinEPrimary;
   G4double _totalEdep;
+  AllPixRunAction* event_act;
+  std::map<int,pair<int,int>>::iterator it;
+
 
   // used to dump tracking info in special cases
   long m_globalTrackId_Dump;

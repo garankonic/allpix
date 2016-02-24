@@ -35,10 +35,10 @@
 #include "G4VExtDecayer.hh"
 #include "G4Pythia8DecayerMessenger.hh"
 #include "Pythia8/Pythia.h"
+#include "G4Pythia8.hh"
 
 #include "globals.hh"
 
-class Pythia8Particle;
 class G4Track;
 class G4DecayProducts;
 
@@ -58,7 +58,6 @@ class G4Pythia8Decayer : public G4VExtDecayer
 
     virtual G4DecayProducts* ImportDecayProducts(const G4Track& track);
     
-    void ForceDecayType(EDecayType decayType);
     void SetVerboseLevel(G4int verboseLevel) { fVerboseLevel =  verboseLevel; }
     
   private:
@@ -69,20 +68,18 @@ class G4Pythia8Decayer : public G4VExtDecayer
     G4Pythia8Decayer& operator=(const G4Pythia8Decayer& right);
     
     G4ParticleDefinition*
-    GetParticleDefinition(const Pythia8Particle* p,G4bool warn = true) const;
-    G4DynamicParticle* CreateDynamicParticle(const Pythia8Particle* p) const;
-    G4ThreeVector GetParticlePosition(const Pythia8Particle* particle) const;
-    G4ThreeVector GetParticleMomentum(const Pythia8Particle* particle) const;
-                           
-    G4int CountProducts(G4int channel, G4int particle);
-    void  ForceParticleDecay(G4int particle, G4int product1, G4int product2);
+    GetParticleDefinition(const Pythia8::Particle* p,G4bool warn = true) const;
+    G4DynamicParticle* CreateDynamicParticle(const Pythia8::Particle* p) const;
+    G4ThreeVector GetParticlePosition(const Pythia8::Particle* particle) const;
+    G4ThreeVector GetParticleMomentum(const Pythia8::Particle* particle) const;
     
     void  Decay(G4int pdg, const CLHEP::HepLorentzVector& p);
-    G4int ImportParticles(ParticleVector* particles);
+    void  AppendParticle(G4int pdg, const CLHEP::HepLorentzVector& p);
+    void  ClearEvent();
     
+    G4Pythia8*       fPythia8;
     G4Pythia8DecayerMessenger fMessenger;  ///< command messenger
     G4int            fVerboseLevel;        ///< verbose level
-    ParticleVector*  fDecayProductsArray ; ///< array of decay products
 };
 
 // ----------------------------------------------------------------------------
