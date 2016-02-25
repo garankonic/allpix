@@ -71,6 +71,11 @@ HepMCG4Pythia8Messenger::HepMCG4Pythia8Messenger(HepMCG4Pythia8Interface* agen)
   G4UIparameter* parameter= new G4UIparameter ("Parameter", 's', false);
   cpythiaread-> SetParameter(parameter);
 
+  cpythiareadfile= new G4UIcommand("/generator/pythia8/readFile",this);
+  cpythiareadfile-> SetGuidance("call PYTHIAREADFILE");
+  G4UIparameter* filename = new G4UIparameter ("Parameter", 's', false);
+  cpythiareadfile-> SetParameter(filename);
+
   setUserParameters=
     new G4UIcmdWithoutParameter("/generator/pythia8/setUserParameters",this);
   setUserParameters->
@@ -126,6 +131,10 @@ void HepMCG4Pythia8Messenger::SetNewValue(G4UIcommand* command,
   } else if (command == cpythiaread) { // /pythiaread ...
     G4String s= newValues;
     gen-> CallPythiaReadString(s);
+
+  } else if (command == cpythiareadfile) { // /pythiaread ...
+    G4String s= newValues;
+    gen-> CallPythiaReadFile(s);
 
   } else if (command == setUserParameters) { // /setUserParameters ...
     gen-> SetUserParameters();

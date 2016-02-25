@@ -87,7 +87,7 @@ void HepMCG4Interface::HepMC2G4(const HepMC::GenEvent* hepmcevt,
         break;
       }
     }
-    if (!qvtx) continue;
+    //if (!qvtx) continue;
 
     // check world boundary
     HepMC::FourVector pos= (*vitr)-> position();
@@ -103,9 +103,10 @@ void HepMCG4Interface::HepMC2G4(const HepMC::GenEvent* hepmcevt,
            vpitr= (*vitr)->particles_begin(HepMC::children);
          vpitr != (*vitr)->particles_end(HepMC::children); ++vpitr) {
 
-      if( (*vpitr)->status() != 1 ) continue;
+      //if( (*vpitr)->status() != 1 ) continue;
 
       G4int pdgcode= (*vpitr)-> pdg_id();
+      if(pdgcode != 4122) continue;
       pos= (*vpitr)-> momentum();
       G4LorentzVector p(pos.px(), pos.py(), pos.pz(), pos.e());
       G4PrimaryParticle* g4prim=

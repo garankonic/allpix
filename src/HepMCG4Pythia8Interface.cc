@@ -53,6 +53,11 @@ void HepMCG4Pythia8Interface::CallPythiaReadString(G4String par)
 {
    pythia.readString(par);
 }
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void HepMCG4Pythia8Interface::CallPythiaReadFile(G4String par)
+{
+   pythia.readFile(par);
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void HepMCG4Pythia8Interface::CallPythiaInit(G4int beam,

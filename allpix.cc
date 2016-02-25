@@ -155,8 +155,8 @@ int main(int argc, char** argv)
 	runManager->SetUserAction(run_action);
 
 	// Particle gun
-    SourceType st = _GeneralParticleSource;
-    //SourceType st = _HEPEvtInterface;
+    //SourceType st = _GeneralParticleSource;
+    SourceType st = _HEPEvtInterface;
 	AllPixPrimaryGeneratorAction * gen_action = new AllPixPrimaryGeneratorAction(st);
 	runManager->SetUserAction(gen_action);
 

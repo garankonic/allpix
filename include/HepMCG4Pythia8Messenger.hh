@@ -48,6 +48,7 @@ private:
   G4UIcommand*             cpythiainit;
   G4UIcmdWithoutParameter* cpythiastat;
   G4UIcommand*             cpythiaread;
+  G4UIcommand*             cpythiareadfile;
   G4UIcommand*             setUserParameters;
   G4UIcmdWithAnInteger*    setSeed;
   G4UIcmdWithAString*      printRandomStatus;

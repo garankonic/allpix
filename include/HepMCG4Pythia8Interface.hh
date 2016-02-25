@@ -62,6 +62,7 @@ public:
   void CallPythiaInit(G4int beam, G4int target, G4double eCM);
   void CallPythiaStat();
   void CallPythiaReadString(G4String par);
+  void CallPythiaReadFile(G4String par);
 
   // random numbers operations
   void SetRandomSeed(G4int iseed);

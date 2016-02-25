@@ -1,0 +1,12 @@
+SigmaProcess:renormScale2 = 3
+SigmaProcess:factorScale2 = 3
+SigmaProcess:renormMultFac = 2
+SigmaProcess:factorMultFac = 2
+StringFlav:mesonCvector = 1.5
+StringFlav:mesonBvector = 3
+
+HardQCD:hardccbar = on
+4122:onMode = off
+4122:onIfMatch = 3122 211
+3122:onMode = off
+3122:onIfMatch = 2212 -211
