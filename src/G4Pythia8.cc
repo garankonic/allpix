@@ -186,6 +186,16 @@ void  G4Pythia8::ReadConfigFile(const char* string) const
 {
   fPythia->readFile(string);
 }
+////////////////////////////////////////////////////////////////////////////////
+/// Set Seed
+
+void G4Pythia8::SetSeed(G4int iseed) const
+{
+    fPythia->readString("Random:setSeed = on");
+    ostringstream Seed;
+    Seed<<"Random:seed = "<<iseed;
+    fPythia->readString(Seed.str());
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Event listing

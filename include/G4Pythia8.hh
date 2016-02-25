@@ -81,6 +81,7 @@ public:
    // Others
    void                    ReadString(const char* string) const;
    void                    ReadConfigFile(const char* string) const;
+   void                    SetSeed(G4int iseed) const;
    G4bool                  Initialize(G4int idAin, G4int idBin, G4double ecms);
    G4bool                  Initialize(G4int idAin, G4int idBin, G4double eAin, G4double eBin);
    void                    ListAll() const;

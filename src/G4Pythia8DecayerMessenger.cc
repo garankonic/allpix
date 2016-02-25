@@ -41,6 +41,7 @@
 
 #include <G4UIdirectory.hh>
 #include <G4UIcmdWithAnInteger.hh>
+#include <G4UIcmdWithoutParameter.hh>
 
 #include <sstream>
 
@@ -52,7 +53,10 @@ G4Pythia8DecayerMessenger::G4Pythia8DecayerMessenger(
     fPythia8Decayer(Pythia8Decayer),
     fDirectory(0),
     fVerboseCmd(0),
-    fDecayTypeCmd(0)
+    fSetSeedCmd(0),
+    fPythiaReadCmd(0),
+    fPythiaReadFileCmd(0),
+    fPythiaInitCmd(0)
 {
 /// Standard constructor
 
@@ -66,15 +70,22 @@ G4Pythia8DecayerMessenger::G4Pythia8DecayerMessenger(
   fVerboseCmd->SetRange("VerboseLevel >= 0 && VerboseLevel <= 1");
   fVerboseCmd->AvailableForStates(G4State_Idle);
 
-  fDecayTypeCmd 
-    = new G4UIcmdWithAnInteger("/Pythia8Decayer/forceDecayType", this);
-  fDecayTypeCmd->SetGuidance("Force the specified decay type");
-  fDecayTypeCmd->SetParameterName("DecayType", false);
-  /*std::ostringstream os;
-  os << "DecayType >=  " << kSemiElectronic 
-     << " && DecayType <= " << kMaxDecay;
-  fDecayTypeCmd->SetRange(os.str().c_str());*/
-  fDecayTypeCmd->AvailableForStates(G4State_Idle);
+  fPythiaReadCmd = new G4UIcommand("/Pythia8Decayer/Read",this);
+  fPythiaReadCmd->SetGuidance("Read String");
+  G4UIparameter* string = new G4UIparameter ("String to Read", 's', false);
+  fPythiaReadCmd->SetParameter(string);
+
+  fPythiaReadFileCmd = new G4UIcommand("/Pythia8Decayer/ReadFile",this);
+  fPythiaReadFileCmd->SetGuidance("Read File");
+  G4UIparameter* filename = new G4UIparameter ("File to Read", 's', false);
+  fPythiaReadFileCmd->SetParameter(filename);
+
+  fSetSeedCmd = new G4UIcmdWithAnInteger("/Pythia8Decayer/SetSeed",this);
+  fSetSeedCmd->SetGuidance("Set initial seed");
+
+  fPythiaInitCmd = new G4UIcmdWithoutParameter("/Pythia8Decayer/Init",this);
+  fPythiaInitCmd->SetGuidance("Initialize Pythia with parameters");
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -83,9 +94,12 @@ G4Pythia8DecayerMessenger::~G4Pythia8DecayerMessenger()
 {
 /// Destructor
 
-  delete fDirectory;
-  delete fVerboseCmd;
-  delete fDecayTypeCmd;
+    delete fDirectory;
+    delete fVerboseCmd;
+    delete fPythiaReadCmd;
+    delete fPythiaReadFileCmd;
+    delete fPythiaInitCmd;
+    delete fSetSeedCmd;
 }
 
 //
@@ -99,14 +113,25 @@ void G4Pythia8DecayerMessenger::SetNewValue(G4UIcommand* command,
 { 
 /// Apply command to the associated object.
 
-  if(command == fVerboseCmd) { 
-    fPythia8Decayer
-      ->SetVerboseLevel(fVerboseCmd->GetNewIntValue(newValue)); 
-  }   
-  /*else if(command == fDecayTypeCmd) {
-    fPythia8Decayer
-      ->ForceDecayType(EDecayType(fDecayTypeCmd->GetNewIntValue(newValue))); 
-  }*/
+    if(command == fVerboseCmd) {
+        fPythia8Decayer
+                ->SetVerboseLevel(fVerboseCmd->GetNewIntValue(newValue)); \
+    }
+    else if(command == fSetSeedCmd) {
+        G4int iseed = fSetSeedCmd->GetNewIntValue(newValue);
+        fPythia8Decayer->GetPythia8()->SetSeed(iseed);
+    }
+    else if(command == fPythiaInitCmd) {
+        fPythia8Decayer->Init();
+    }
+    else if(command == fPythiaReadCmd) {
+        G4String s = newValue;
+        fPythia8Decayer->GetPythia8()->ReadString(s.c_str());
+    }
+    else if(command == fPythiaReadFileCmd) {
+        G4String s = newValue;
+        fPythia8Decayer->GetPythia8()->ReadConfigFile(s.c_str());
+    }
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

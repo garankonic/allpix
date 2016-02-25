@@ -76,10 +76,10 @@ void AllPixEventAction::EndOfEventAction(const G4Event * evt)
 		myDM->Digitize();
 	}
 
-    G4cout<<"!!!!!! PDG ID of each track\ntrack\tpdg\n";
+    /*G4cout<<"!!!!!! PDG ID of each track\ntrack\tpdg\n";
     for (std::map<int,pair<int,int>>::iterator it=m_run_action->track_pdgid.begin(); it!=m_run_action->track_pdgid.end(); ++it)
     {    G4cout << it->first << "\t" << it->second.first << "\t" << it->second.second << "\n";
-    }
+    }*/
     m_run_action->track_pdgid.clear();
 
 	// digits will be retrieved at the end of the event in AllPixRun.

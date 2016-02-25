@@ -296,9 +296,9 @@ G4bool AllPixTrackerSD::ProcessHits(G4Step * aStep, G4TouchableHistory *)
 	//newHit->Print();
 	//newHit->Draw();
 
-	if ( _totalEdep > _kinEPrimary ) {
+    /*if ( _totalEdep > _kinEPrimary ) {
 		cout << "[WARNING] totalEdep = " << _totalEdep << ", kinEPrimary = " << _kinEPrimary << endl;
-	}
+    }*/
 
 	return true;
 }

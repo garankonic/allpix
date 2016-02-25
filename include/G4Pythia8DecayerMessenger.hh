@@ -40,6 +40,7 @@ class G4Pythia8Decayer;
 class G4UIdirectory;
 class G4UIcmdWithAnInteger;
 class G4UIcmdWithABool;
+class G4UIcmdWithoutParameter;
 
 /// Messenger class that defines commands for G4Pythia8Decayer.
 ///
@@ -70,7 +71,10 @@ class G4Pythia8DecayerMessenger : public G4UImessenger
     G4Pythia8Decayer*      fPythia8Decayer;    ///< associated class
     G4UIdirectory*         fDirectory;         ///< command directory
     G4UIcmdWithAnInteger*  fVerboseCmd;        ///< command: verbose
-    G4UIcmdWithAnInteger*  fDecayTypeCmd;      ///< command: forceDEcayeType
+    G4UIcmdWithoutParameter* fPythiaInitCmd;
+    G4UIcommand*             fPythiaReadCmd;
+    G4UIcommand*             fPythiaReadFileCmd;
+    G4UIcmdWithAnInteger*    fSetSeedCmd;
 };
 
 // ----------------------------------------------------------------------------

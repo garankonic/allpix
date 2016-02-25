@@ -59,6 +59,8 @@ class G4Pythia8Decayer : public G4VExtDecayer
     virtual G4DecayProducts* ImportDecayProducts(const G4Track& track);
     
     void SetVerboseLevel(G4int verboseLevel) { fVerboseLevel =  verboseLevel; }
+    void  Init();
+    G4Pythia8* GetPythia8() { return fPythia8; }
     
   private:
 
@@ -77,9 +79,10 @@ class G4Pythia8Decayer : public G4VExtDecayer
     void  AppendParticle(G4int pdg, const CLHEP::HepLorentzVector& p);
     void  ClearEvent();
     
-    G4Pythia8*       fPythia8;
+
     G4Pythia8DecayerMessenger fMessenger;  ///< command messenger
     G4int            fVerboseLevel;        ///< verbose level
+    G4Pythia8*       fPythia8;
 };
 
 // ----------------------------------------------------------------------------

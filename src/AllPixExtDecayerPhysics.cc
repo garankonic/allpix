@@ -80,6 +80,7 @@ void AllPixExtDecayerPhysics::ConstructProcess()
   {    
     G4ParticleDefinition* particle = aParticleIterator->value();
     G4ProcessManager* pmanager = particle->GetProcessManager();
+    particle->SetDecayTable((G4DecayTable*)0);
     
     if ( verboseLevel > 1 ) {
       G4cout << "!!! Setting ext decayer for: "
@@ -92,6 +93,12 @@ void AllPixExtDecayerPhysics::ConstructProcess()
     
       G4Decay* decay = dynamic_cast<G4Decay*>((*processVector)[i]);
       if ( decay ) decay->SetExtDecayer(extDecayer);
+      if ( decay ) {
+
+          G4cout << "!!! Setting ext decayer for: "
+                 <<  aParticleIterator->value()->GetParticleName()
+                 << G4endl;
+      }
     }              
   }
 

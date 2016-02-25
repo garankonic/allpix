@@ -58,10 +58,7 @@ G4Pythia8Decayer::G4Pythia8Decayer()
 {
 /// Standard constructor
 
-  fPythia8->Pythia8()->readString("HardQCD:hardccbar = on");
-  fPythia8->Pythia8()->readString("4122:onMode = off");
-  fPythia8->Pythia8()->readString("4122:onIfMatch = 3122 211");
-  fPythia8->Pythia8()->init();
+;
   
 }
 
@@ -156,12 +153,19 @@ G4ThreeVector G4Pythia8Decayer::GetParticleMomentum(
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
+void G4Pythia8Decayer::Init() {
+    fPythia8->Pythia8()->init();
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
 void G4Pythia8Decayer::Decay(G4int pdg, const CLHEP::HepLorentzVector& p)
 {
     ClearEvent();
     AppendParticle(pdg, p);
     G4int idPart = fPythia8->Pythia8()->event[0].id();
-    fPythia8->Pythia8()->particleData.mayDecay(idPart,true);
+    //G4cout<<"Decaying: "<<idPart<<"\n";
+    //fPythia8->Pythia8()->particleData.mayDecay(idPart,true);
     fPythia8->Pythia8()->moreDecays();
     if (fVerboseLevel > 0) fPythia8->EventListing();
 }
@@ -257,6 +261,6 @@ G4DecayProducts* G4Pythia8Decayer::ImportDecayProducts(const G4Track& track)
   if ( fVerboseLevel > 0 ) {
     G4cout << "nofParticles for tracking: " <<  counter << G4endl;
   }  
-     
+
   return decayProducts;
 }
