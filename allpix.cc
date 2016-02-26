@@ -138,13 +138,14 @@ int main(int argc, char** argv)
 
 	runManager->SetUserInitialization(detector);
 
-    //G4VUserPhysicsList * physics = new AllPixPhysicsList;
-    G4VModularPhysicsList* physics = new FTFP_BERT;
-    physics->RegisterPhysics(new AllPixExtDecayerPhysics());
+    G4VModularPhysicsList * physics = new AllPixPhysicsList();
+    //physics->SetVerboseLevel(2);
+    //physics->RegisterPhysics(new AllPixExtDecayerPhysics());
+    //G4VModularPhysicsList* physics = new FTFP_BERT;
+    //physics->RegisterPhysics(new AllPixExtDecayerPhysics());
     //physics->SetVerboseLevel(2);
     //physics->DumpList();
     runManager-> SetUserInitialization(physics);
-
 	// Hits ! --> Ntuple to store hits
 	// creates AllPixRun to analyze hits at the end of event
 	TString dataset = "allPix";

@@ -78,6 +78,7 @@
 //#include "HadronPhysicsQGSP_BIC_HP.hh"
 //#include "HadronPhysicsQGSP_FTFP_BERT.hh"
 //#include "HadronPhysicsQGS_BIC.hh"
+#include "G4HadronPhysicsFTFP_BERT.hh"
 
 #include "G4EmCompPhotoEPhysics.hh"
 
@@ -92,6 +93,8 @@
 #include "G4Electron.hh"
 #include "G4Positron.hh"
 #include "G4Proton.hh"
+
+#include "AllPixExtDecayerPhysics.hh"
 
 #include "CLHEP/Units/SystemOfUnits.h"
 using namespace CLHEP;
@@ -116,6 +119,7 @@ AllPixPhysicsList::AllPixPhysicsList() : G4VModularPhysicsList()
 
   // EM physics
   emAllPixPhysicsList = new G4EmStandardPhysics();
+  ext_decayer = new AllPixExtDecayerPhysics;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.....
@@ -124,6 +128,7 @@ AllPixPhysicsList::~AllPixPhysicsList()
 {
   delete pMessenger;
   delete particleList;
+  delete ext_decayer;
   delete emAllPixPhysicsList;
   for(size_t i=0; i<hadronPhys.size(); i++) {
     delete hadronPhys[i];
@@ -142,17 +147,20 @@ void AllPixPhysicsList::ConstructParticle()
 
 void AllPixPhysicsList::ConstructProcess()
 {
-  AddTransportation();
+
+  AddTransportation(); 
   emAllPixPhysicsList->ConstructProcess();
   particleList->ConstructProcess();
   for(size_t i=0; i<hadronPhys.size(); i++) {
     hadronPhys[i]->ConstructProcess();
   }
+  ext_decayer->ConstructProcess();
   AddStepMax();
 }
 
 void AllPixPhysicsList::SetVerbose(G4int verbose)
 {
+    ext_decayer->SetVerboseLevel(verbose);
 	emAllPixPhysicsList->SetVerboseLevel(verbose);
 	  for(size_t i=0; i<hadronPhys.size(); i++) {
     	hadronPhys[i]->SetVerboseLevel(verbose);
@@ -222,6 +230,14 @@ void AllPixPhysicsList::AddAllPixPhysicsList(const G4String& name)
 
     AddAllPixPhysicsList("emstandard_opt2");
     AddAllPixPhysicsList("FTFP_BERT");
+
+  }
+
+  else if (name == "FTFP_BERT") {
+
+      delete emAllPixPhysicsList;
+      emAllPixPhysicsList = new G4EmStandardPhysics();
+      hadronPhys.push_back( new G4HadronPhysicsFTFP_BERT());
 
   }
 

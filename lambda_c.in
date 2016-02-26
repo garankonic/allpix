@@ -60,8 +60,8 @@
 
 ####################################################################
 # Build detectors
-#/allpix/phys/Physics emstandard_op0
-#/allpix/phys/Physics FTFP_BERT
+#/allpix/phys/Physics emstandard_opt0
+/allpix/phys/Physics FTFP_BERT
 /run/initialize
 /allpix/det/update
 
@@ -74,9 +74,9 @@
 /process/verbose 0
 /hits/verbose 0
 /digi/Verbose 0
-#/allpix/phys/verbose 1
+/allpix/phys/verbose 1
 
-/control/execute vis.mac
+#/control/execute vis.mac
 
 #/allpix/WriteROOTFiles/write 1
 #/allpix/WriteROOTFiles/setFolderPath ./outputROOT

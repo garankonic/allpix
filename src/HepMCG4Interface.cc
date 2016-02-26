@@ -76,18 +76,18 @@ void HepMCG4Interface::HepMC2G4(const HepMC::GenEvent* hepmcevt,
    for(HepMC::GenEvent::vertex_const_iterator vitr= hepmcevt->vertices_begin();
        vitr != hepmcevt->vertices_end(); ++vitr ) { // loop for vertex ...
 
-      // real vertex?
+      // real vertex (which contains status=2 particles(decaying)
       G4bool qvtx=false;
     for (HepMC::GenVertex::particle_iterator
            pitr= (*vitr)->particles_begin(HepMC::children);
          pitr != (*vitr)->particles_end(HepMC::children); ++pitr) {
 
-      if (!(*pitr)->end_vertex() && (*pitr)->status()==1) {
+      if (/*!(*pitr)->end_vertex() && */(*pitr)->status()==2) {
         qvtx=true;
         break;
       }
     }
-    //if (!qvtx) continue;
+    if (!qvtx) continue;
 
     // check world boundary
     HepMC::FourVector pos= (*vitr)-> position();

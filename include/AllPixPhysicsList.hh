@@ -47,6 +47,7 @@
 
 class G4VPhysicsConstructor;
 class AllPixPhysicsListMessenger;
+class AllPixExtDecayerPhysics;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -67,6 +68,7 @@ public:
         
   void AddAllPixPhysicsList(const G4String& name);
   void ConstructProcess();
+  void RegisterPhysics1(G4VPhysicsConstructor *constructor) { constructor->ConstructProcess(); }
   void AddStepMax();
   void List();
   
@@ -85,6 +87,7 @@ private:
 
   G4VPhysicsConstructor*  emAllPixPhysicsList;
   G4VPhysicsConstructor*  particleList;
+  AllPixExtDecayerPhysics *ext_decayer;
   std::vector<G4VPhysicsConstructor*>  hadronPhys;
     
   AllPixPhysicsListMessenger* pMessenger;

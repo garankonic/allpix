@@ -80,7 +80,7 @@ void AllPixExtDecayerPhysics::ConstructProcess()
   {    
     G4ParticleDefinition* particle = aParticleIterator->value();
     G4ProcessManager* pmanager = particle->GetProcessManager();
-    particle->SetDecayTable((G4DecayTable*)0);
+    if(particle->GetPDGEncoding() == 3122) particle->SetDecayTable((G4DecayTable*)0);
     
     if ( verboseLevel > 1 ) {
       G4cout << "!!! Setting ext decayer for: "

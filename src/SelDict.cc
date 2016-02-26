@@ -902,7 +902,7 @@ namespace {
     static const char* includePaths[] = {
 "./include",
 "/home/maren/GEANT4/root_v6.04.12_install/include",
-"/home/maren/GEANT4/beamtelescope/allpix_v1.1/allpix/",
+"/home/maren/lambda_c/allpix_v1.1/allpix/",
 0
     };
     static const char* fwdDeclCode = 

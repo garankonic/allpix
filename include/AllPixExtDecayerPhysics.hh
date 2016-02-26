@@ -50,12 +50,13 @@ class AllPixExtDecayerPhysics: public G4VPhysicsConstructor
   public:
     AllPixExtDecayerPhysics(const G4String& name = "ExtDecayer");
     virtual ~AllPixExtDecayerPhysics();
-
-  protected:
     // methods
           // construct particle and physics
     virtual void ConstructParticle();
     virtual void ConstructProcess();
+
+  protected:
+
 
   private:
     /// Not implemented
