@@ -138,13 +138,9 @@ int main(int argc, char** argv)
 
 	runManager->SetUserInitialization(detector);
 
-    G4VModularPhysicsList * physics = new AllPixPhysicsList();
-    //physics->SetVerboseLevel(2);
-    //physics->RegisterPhysics(new AllPixExtDecayerPhysics());
-    //G4VModularPhysicsList* physics = new FTFP_BERT;
-    //physics->RegisterPhysics(new AllPixExtDecayerPhysics());
-    //physics->SetVerboseLevel(2);
-    //physics->DumpList();
+    //G4VModularPhysicsList * physics = new AllPixPhysicsList();
+    G4VModularPhysicsList* physics = new FTFP_BERT;
+    physics->RegisterPhysics(new AllPixExtDecayerPhysics());
     runManager-> SetUserInitialization(physics);
 	// Hits ! --> Ntuple to store hits
 	// creates AllPixRun to analyze hits at the end of event
@@ -156,8 +152,14 @@ int main(int argc, char** argv)
 	runManager->SetUserAction(run_action);
 
 	// Particle gun
-    //SourceType st = _GeneralParticleSource;
-    SourceType st = _HEPEvtInterface;
+    SourceType st = _GeneralParticleSource;
+    for(int i=0;i<argc;i++) {
+        if(!strcmp(argv[i],"-pgun")) st=_ParticleGun;
+        if(!strcmp(argv[i],"-gps")) st=_GeneralParticleSource;
+        if(!strcmp(argv[i],"-pythia")) st=_HepMCPythia8;
+        if(!strcmp(argv[i],"-hepevt")) st=_HEPEvtInterface;
+        if(!strcmp(argv[i],"-herwigpp")) st=_HepMCHerwig7;
+    }
 	AllPixPrimaryGeneratorAction * gen_action = new AllPixPrimaryGeneratorAction(st);
 	runManager->SetUserAction(gen_action);
 
@@ -203,7 +205,7 @@ int main(int argc, char** argv)
 
 	G4String command = "/control/execute ";
 
-	if (argc-1 == _RUN_BATCH)   // batch mode
+    if (argc-1 >= _RUN_BATCH)   // batch mode
 	{
 		//G4String command = "/control/execute ";
 		//G4String fileName = argv[_MACRO];

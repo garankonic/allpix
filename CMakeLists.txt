@@ -33,6 +33,14 @@ endif()
 # Find HepMC (required package)
 #
 find_package(HepMC REQUIRED)
+#----------------------------------------------------------------------------
+# Find ThePEG (required package)
+#
+find_package(ThePEG REQUIRED)
+
+# Find Herwig (required package)
+#
+find_package(Herwig REQUIRED)
 
 #----------------------------------------------------------------------------
 # Setup Geant4 include directories and compile definitions
@@ -54,8 +62,8 @@ else()
   set(PYTHIA8_HAPDF_LIBRARY "")
 endif()
 
-#set(HEPMC_INCLUDE_DIR "/home/maren/GEANT4/HepMC-2.06.09_install/include")
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-shadow -Wno-all")
 #----------------------------------------------------------------------------
 # Locate sources and headers for this project
 # NB: headers are included so they will show up in IDEs
@@ -63,19 +71,20 @@ endif()
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include 
                     ${Geant4_INCLUDE_DIR}
 		    ${HEPMC_INCLUDE_DIR}
-                    ${PYTHIA8_INCLUDE_DIR})
+                    ${PYTHIA8_INCLUDE_DIR}
+                    ${THEPEG_INCLUDE_DIR})
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/SelDict.cc ${PROJECT_SOURCE_DIR}/src/*.cc)
 file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 
 ROOT_GENERATE_DICTIONARY(HepMC include/HepMCG4Classes.hh  LINKDEF include/HepMCG4LinkDef.h )
-add_library(HepMCdict SHARED ${sources} HepMC.cxx)
+add_library(HepMCdict SHARED HepMC.cxx)
 target_link_libraries(HepMCdict ${HEPMC_LIBRARIES} ${ROOT_LIBRARIES})
 
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
 add_executable(allpix allpix.cc ${sources} ${headers})
-target_link_libraries(allpix ${Geant4_LIBRARIES} ${HEPMC_LIBRARIES}
+target_link_libraries(allpix ${Geant4_LIBRARIES} ${HEPMC_LIBRARIES} ${THEPEG_LIBRARIES} ${HERWIG_LIBRARIES}
                        ${PYTHIA8_LIBRARY}
                        ${PYTHIA8_HEPMC_LIBRARY} ${PYTHIA8_HAPDF_LIBRARY}
                        HepMCdict ${ROOT_LIBRARIES})

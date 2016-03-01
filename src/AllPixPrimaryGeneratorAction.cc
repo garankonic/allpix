@@ -46,6 +46,7 @@
 #include "G4HEPEvtInterface.hh"
 
 #include "HepMCG4Pythia8Interface.hh"
+#include "HepMCG4Herwig7Interface.hh"
 
 #include "G4RunManager.hh"
 
@@ -91,9 +92,18 @@ AllPixPrimaryGeneratorAction::AllPixPrimaryGeneratorAction(SourceType st)
 	{
 		/* using external MC data */
 		m_gunMessenger = new AllPixPrimaryGeneratorMessenger(this);
-        //m_HEPEvt = new G4HEPEvtInterface(G4String("/afs/cern.ch/user/m/mbenoit/scratch0/Full_Tracker_Model/HEPEVT_files/AllPairs3TeV8MeV6Deg.HEPEvt"));
-        m_HEPEvt = new HepMCG4Pythia8Interface();
+        m_HEPEvt = new G4HEPEvtInterface(G4String("/afs/cern.ch/user/m/mbenoit/scratch0/Full_Tracker_Model/HEPEVT_files/AllPairs3TeV8MeV6Deg.HEPEvt"));
 	}
+    else if(m_sType == _HepMCPythia8){
+        /* using external Pythia8 */
+        m_gunMessenger = new AllPixPrimaryGeneratorMessenger(this);
+        m_HEPEvt = new HepMCG4Pythia8Interface();
+    }
+    else if(m_sType == _HepMCHerwig7){
+        /* using external Herwig++ */
+        m_gunMessenger = new AllPixPrimaryGeneratorMessenger(this);
+        m_HEPEvt = new HepMCG4Herwig7Interface();
+    }
 
 	// store temporarily the position of incoming particles
 	m_primaryParticlePos.clear();
@@ -107,7 +117,7 @@ AllPixPrimaryGeneratorAction::~AllPixPrimaryGeneratorAction()
 	if(m_particleGun) delete m_particleGun;
 	if(m_particleSource) delete m_particleSource;
 	if(m_gunMessenger) delete m_gunMessenger;
-	if(m_HEPEvt) delete m_HEPEvt;
+    if(m_HEPEvt) delete m_HEPEvt;
 }
 
 

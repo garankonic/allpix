@@ -58,7 +58,9 @@ class G4VPrimaryGenerator;
 enum SourceType {
   _ParticleGun = 0,
   _GeneralParticleSource,
-  _HEPEvtInterface
+  _HEPEvtInterface,
+  _HepMCPythia8,
+  _HepMCHerwig7
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
