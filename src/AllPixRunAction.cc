@@ -138,13 +138,15 @@ void AllPixRunAction::EndOfRunAction(const G4Run* aRun)
 
   TFile file("test.root","RECREATE");
   for(int i=0;i<histos.size();i++) {
-        Double_t norm = (Double_t)histos[i]->GetNbinsX()/histos[i]->GetEntries();
-        histos[i]->Scale(norm);
-        histos[i]->Draw();
-        char buffer [50];
-        sprintf(buffer,"%s_%d.png",histos[i]->GetName(),i);
-        c1->Print(buffer,"png");
-        histos[i]->Write(histos[i]->GetName());
+      if(histos[i]->GetEntries() > 0) {
+          Double_t norm = (Double_t)histos[i]->GetNbinsX()/histos[i]->GetEntries();
+          histos[i]->Scale(norm);
+          histos[i]->Draw();
+          char buffer [50];
+          sprintf(buffer,"%s_%d.png",histos[i]->GetName(),i);
+          c1->Print(buffer,"png");
+          histos[i]->Write(histos[i]->GetName());
+      }
   }
   file.Close();
   m_AllPixRun->FillFramesNtuple(aRun);
