@@ -47,6 +47,7 @@
 
 #include <vector>
 #include <string>
+
 using namespace std;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -117,6 +118,14 @@ void AllPixRunAction::BeginOfRunAction(const G4Run* aRun)
 {
   G4cout << "### Run " << aRun->GetRunID() << " start." << G4endl;
   timer->Start();
+
+  c1 = new TCanvas();
+  c1->cd();
+  histos.push_back(new TH1F("cos_pip_x","Angle Between Pi+ and X in LC frame",100,-1,1));
+  histos.push_back(new TH1F("cos_pip_y","Angle Between Pi+ and Y in LC frame",100,-1,1));
+  histos.push_back(new TH1F("cos_pip_z","Angle Between Pi+ and Z in LC frame",100,-1,1));
+  histos.push_back(new TH1F("cos_pip_pim","Angle Between Pi+ and Pi- in L0 frame",100,-1,1));
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -126,6 +135,18 @@ void AllPixRunAction::EndOfRunAction(const G4Run* aRun)
 
   // at the end of the run
   G4cout << "Filling frames ntuple" << G4endl;
+
+  TFile file("test.root","RECREATE");
+  for(int i=0;i<histos.size();i++) {
+        Double_t norm = (Double_t)histos[i]->GetNbinsX()/histos[i]->GetEntries();
+        histos[i]->Scale(norm);
+        histos[i]->Draw();
+        char buffer [50];
+        sprintf(buffer,"%s_%d.png",histos[i]->GetName(),i);
+        c1->Print(buffer,"png");
+        histos[i]->Write(histos[i]->GetName());
+  }
+  file.Close();
   m_AllPixRun->FillFramesNtuple(aRun);
 
   /*

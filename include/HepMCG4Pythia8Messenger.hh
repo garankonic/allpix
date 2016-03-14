@@ -46,6 +46,7 @@ private:
   G4UIcmdWithAnInteger*    verbose;
   G4UIcmdWithoutParameter* print;
   G4UIcommand*             cpythiainit;
+  G4UIcommand*             clambdaC_polarization;
   G4UIcmdWithoutParameter* cpythiastat;
   G4UIcommand*             cpythiaread;
   G4UIcommand*             cpythiareadfile;

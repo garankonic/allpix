@@ -111,6 +111,8 @@ void HepMCG4Interface::HepMC2G4(const HepMC::GenEvent* hepmcevt,
       G4LorentzVector p(pos.px(), pos.py(), pos.pz(), pos.e());
       G4PrimaryParticle* g4prim=
         new G4PrimaryParticle(pdgcode, p.x()*MeV, p.y()*MeV, p.z()*MeV);
+      //setting lambda C polarization
+      if(pdgcode == 4122) g4prim->SetPolarization(fPolarization);
 
       g4vtx-> SetPrimary(g4prim);
     }

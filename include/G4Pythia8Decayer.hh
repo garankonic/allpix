@@ -78,11 +78,19 @@ class G4Pythia8Decayer : public G4VExtDecayer
     void  Decay(G4int pdg, const CLHEP::HepLorentzVector& p);
     void  AppendParticle(G4int pdg, const CLHEP::HepLorentzVector& p);
     void  ClearEvent();
+    G4double probability_density(G4double alpha_lambdaC, G4ThreeVector polarization,G4ThreeVector axis);
+    G4double pol_check(G4double alpha, G4ThreeVector polarization, G4ThreeVector axis);
+    G4double probability_density_lambda0(G4double x);
+    G4double probability_density_lambda0_max();
+
+
     
 
     G4Pythia8DecayerMessenger fMessenger;  ///< command messenger
     G4int            fVerboseLevel;        ///< verbose level
     G4Pythia8*       fPythia8;
+    G4double alpha_lambdaC = -0.74;
+    G4double alpha_lambda0 = 0.642;
 };
 
 // ----------------------------------------------------------------------------

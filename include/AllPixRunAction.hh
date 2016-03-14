@@ -47,6 +47,9 @@
 #include "AllPixPrimaryGeneratorAction.hh"
 #include "AllPixWriteROOTFile.hh" //nalipour
 
+#include <TH1F.h>
+#include <TCanvas.h>
+
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -91,6 +94,12 @@ public:
   AllPixWriteROOTFile** writeROOTFile; //nalipour: To write MC in a ROOT file
   //map<int,int> track_pdgid;
   map<int,pair<int,int>> track_pdgid;
+  TCanvas *c1;
+  std::vector<TH1F*> histos;
+  G4LorentzVector pip_momentum;
+  G4ThreeVector pip_momentum_LC_normed;
+  G4ThreeVector lambdaC_polarization;
+  G4int lambdaC_trackid;
   
 private:
 

@@ -89,6 +89,15 @@ HepMCG4Pythia8Messenger::HepMCG4Pythia8Messenger(HepMCG4Pythia8Interface* agen)
   printRandomStatus-> SetGuidance("print random number status.");
   printRandomStatus-> SetParameterName("filename", true, false);
   printRandomStatus-> SetDefaultValue("std::cout");
+
+  clambdaC_polarization= new G4UIcommand("/generator/pythia8/lambdaC_polarization", this);
+  clambdaC_polarization-> SetGuidance("Set LambdaC+ polarization");
+  G4UIparameter* pol_x = new G4UIparameter("Polarization X", 'd', false);
+  clambdaC_polarization-> SetParameter(pol_x);
+  G4UIparameter* pol_y = new G4UIparameter("Polarization Y", 'd', false);
+  clambdaC_polarization-> SetParameter(pol_y);
+  G4UIparameter* pol_z= new G4UIparameter("Polarization Z", 'd', false);
+  clambdaC_polarization-> SetParameter(pol_z);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -124,6 +133,14 @@ void HepMCG4Pythia8Messenger::SetNewValue(G4UIcommand* command,
     G4int sbeam, starget; G4double dwin;
     is >> sbeam >> starget >> dwin;
     gen-> CallPythiaInit(sbeam, starget, dwin);
+
+  } else if (command == clambdaC_polarization) { // /LambdaC Polarization ...
+    const char* strvaluelist= newValues.c_str();
+    std::istringstream is(strvaluelist);
+    G4double pol_x,pol_y,pol_z;
+    is >> pol_x >> pol_y >> pol_z;
+    G4ThreeVector polarization(pol_x,pol_y,pol_z);
+    gen-> SetLambdaCPolarization(polarization);
 
   } else if (command == cpythiastat) { // /pythiastat ...
     gen-> CallPythiaStat();

@@ -289,6 +289,7 @@ void checkflags(int argc, char** argv){
 	if(argc < 2){
 		G4cout << "use: " << G4endl;
 		G4cout << "     " << argv[0] << " macro[filename]" << G4endl;
+        G4cout << "Default generator is GPS, you can change it by setting a flag: -pgun, -gps, -pythia, -hepevt, -herwigpp" << G4endl;
 		exit(1);
 	}
 
