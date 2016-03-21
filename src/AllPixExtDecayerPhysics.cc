@@ -36,6 +36,9 @@
 #include <G4ParticleDefinition.hh>
 #include <G4ProcessManager.hh>
 #include <G4Decay.hh>
+#include <G4DecayWithSpin.hh>
+#include <G4LambdaCDecayWithSpin.hh>
+
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -87,13 +90,25 @@ void AllPixExtDecayerPhysics::ConstructProcess()
              <<  aParticleIterator->value()->GetParticleName() 
              << G4endl;
     } 
-    
+
     G4ProcessVector* processVector = pmanager->GetProcessList();
     for (G4int i=0; i<processVector->length(); i++) {
-    
+
       G4Decay* decay = dynamic_cast<G4Decay*>((*processVector)[i]);
       if ( decay ) decay->SetExtDecayer(extDecayer);
-    }              
+      if (decay && particle->GetPDGEncoding()==4122) pmanager->RemoveProcess(decay);
+    }
+    if(particle->GetPDGEncoding()==4122) {
+        //G4DecayWithSpin* decayWithSpin = new G4DecayWithSpin();
+        G4LambdaCDecayWithSpin* decayWithSpin = new G4LambdaCDecayWithSpin();
+        decayWithSpin->SetExtDecayer(extDecayer);
+        pmanager->AddProcess(decayWithSpin);
+        // set ordering for PostStepDoIt and AtRestDoIt
+        pmanager->SetProcessOrdering(decayWithSpin, idxAtRest);
+        pmanager->SetProcessOrdering(decayWithSpin, idxPostStep);
+        pmanager->DumpInfo();
+    }
+
   }
 
   if ( verboseLevel > 0 ) {

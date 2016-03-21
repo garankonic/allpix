@@ -213,8 +213,8 @@ G4DecayProducts* G4Pythia8Decayer::ImportDecayProducts(const G4Track& track)
   AllPixRunAction* runaction = (AllPixRunAction*)G4RunManager::GetRunManager()->GetUserRunAction();
   // let Pythia8Decayer decay the particle
   // and import the decay products
-  if(pdgEncoding==4122) {
-      G4ThreeVector polarization = track.GetPolarization();
+  G4ThreeVector polarization = runaction->lambdaC_polarization;
+  if(pdgEncoding==4122 && polarization.mag()>0) {
       G4bool accepted = false;
       do {
           Decay(pdgEncoding, p);
@@ -248,6 +248,10 @@ G4DecayProducts* G4Pythia8Decayer::ImportDecayProducts(const G4Track& track)
                   runaction->histos[0]->Fill(costheta_x);
                   runaction->histos[1]->Fill(costheta_y);
                   runaction->histos[2]->Fill(costheta_z);*/
+
+                  /*runaction->histos[0]->Fill(polarization.x());
+                  runaction->histos[1]->Fill(polarization.y());
+                  runaction->histos[2]->Fill(polarization.z());*/
               }
           }
       } while(!accepted);

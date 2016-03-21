@@ -58,6 +58,7 @@ void AllPixEventAction::BeginOfEventAction(const G4Event * /*evt*/)
 
 	//G4PrimaryVertex * pv = evt->GetPrimaryVertex();
     m_run_action->track_pdgid.clear();
+    m_run_action->lambdaC_trackid = -1;
 
 }
 
