@@ -91,7 +91,7 @@ void HepMCG4Interface::HepMC2G4(const HepMC::GenEvent* hepmcevt,
 
     // check world boundary
     HepMC::FourVector pos= (*vitr)-> position();
-    G4LorentzVector xvtx(pos.x(), pos.y(), pos.z(), pos.t());
+    G4LorentzVector xvtx(pos.x(), pos.y(), pos.z()-1*mm, pos.t());
     if (! CheckVertexInsideWorld(xvtx.vect()*mm)) continue;
 
     // create G4PrimaryVertex and associated G4PrimaryParticles

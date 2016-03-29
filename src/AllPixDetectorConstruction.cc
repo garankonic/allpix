@@ -74,6 +74,30 @@
 #include "AllPixMimosa26Digitizer.hh"
 #include "AllPixFEI3StandardDigitizer.hh"
 
+
+//channeling part
+#include "XLatticeManager3.hh"
+
+#include "XLogicalAtomicLattice.hh"
+#include "XLogicalAtomicLatticeDiamond.hh"
+#include "XLogicalBase.hh"
+#include "XUnitCell.hh"
+
+#include "XCrystalPlanarMolierePotential.hh"
+#include "XCrystalPlanarMoliereElectricField.hh"
+#include "XCrystalPlanarNucleiDensity.hh"
+#include "XCrystalPlanarMoliereElectronDensity.hh"
+#include "XCrystalPlanarMoliereTempPotential.hh"
+#include "XCrystalPlanarMoliereElectricField.hh"
+#include "XCrystalPlanarNucleiDensity.hh"
+#include "XCrystalPlanarMoliereElectronDensity.hh"
+#include "XCrystalCharacteristicArray.hh"
+#include "XCrystalIntegratedDensityPlanar.hh"
+#include "XCrystalIntegratedDensityHub.hh"
+#include "XCrystalIntegratedDensityHub.hh"
+
+
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 AllPixDetectorConstruction::AllPixDetectorConstruction()
@@ -117,6 +141,30 @@ AllPixDetectorConstruction::AllPixDetectorConstruction()
 	gD = 0;
 	m_maxStepLengthSensor = 10.0*um;
 	m_ulim = 0x0;
+
+    fXtalLogic = 0;
+
+    bXtal = true;
+    fXtalAngle = G4ThreeVector(0.,0.,0.);
+    fXtalSize = G4ThreeVector(1. * CLHEP::millimeter,
+                              70. * CLHEP::millimeter,
+                              1.94 * CLHEP::millimeter);
+    fXtalCurvatureRadius = G4ThreeVector(38.416 * CLHEP::meter,
+                                         0. * CLHEP::meter,
+                                         0. * CLHEP::meter);
+
+    fXtalCellSize = G4ThreeVector(5.431 * CLHEP::angstrom,
+                                  5.431 * CLHEP::angstrom,
+                                  5.431 * CLHEP::angstrom);
+
+    fXtalCellAngle = G4ThreeVector(90.*CLHEP::deg,
+                                   90.*CLHEP::deg,
+                                   90.*CLHEP::deg);
+
+    fXtalTVA = 0.075 * CLHEP::angstrom;
+    fXtalMiller = G4ThreeVector(2,2,0);
+
+    SetXtalMaterial("G4_Si");
 
 }
 
@@ -238,6 +286,11 @@ G4VPhysicalVolume * AllPixDetectorConstruction::Construct()
 			cntr++;
 		}
 	}
+
+    //** Crystal **//
+    if(bXtal){
+            ConstructXtalTarget();
+    }
 
 	return expHall_phys;
 }
@@ -996,5 +1049,200 @@ void AllPixDetectorConstruction::SetPeakMagField(G4double fieldValue)
 
 	//}
 
+}
+
+void AllPixDetectorConstruction::ConstructXtalTarget(){
+    if(fXtalCurvatureRadius.x() != 0.){
+        double fXtalAngleOut =
+            fXtalAngle.y() + fXtalSize.z()/fXtalCurvatureRadius.x();
+        fXtalSolid = new G4Tubs("Target",
+                                fXtalCurvatureRadius.x() - fXtalSize.x()/2,
+                                fXtalCurvatureRadius.x() + fXtalSize.x()/2,
+                                fXtalSize.y()/2.,
+                                fXtalAngle.y(),
+                                fXtalAngleOut);
+    }
+    else{
+        fXtalSolid = new G4Box("Target",
+                               fXtalSize.x()/2.,
+                               fXtalSize.y()/2.,
+                               fXtalSize.z()/2.);
+    }
+
+    fXtalLogic = new G4LogicalVolume(fXtalSolid,fXtalMaterial,"Target");
+
+    G4RotationMatrix* vRotationMatrix =
+        new G4RotationMatrix; // Rotates X and Z axes only
+
+    G4double crystal_shift = 10.*cm;
+
+    if(fXtalCurvatureRadius.x() != 0.){
+        vRotationMatrix->rotateX(fXtalAngle.x()-CLHEP::pi*0.5);
+        vRotationMatrix->rotateY(fXtalAngle.y());
+        vRotationMatrix->rotateZ(fXtalAngle.z());
+        fXtalPhysical =
+            new G4PVPlacement(vRotationMatrix,
+                              G4ThreeVector(-fXtalCurvatureRadius.x(),0.,0.),
+                              fXtalLogic,"Target",
+                              expHall_log,
+                              false,
+                              0);
+    }
+    else{
+        vRotationMatrix->rotateX(fXtalAngle.x());
+        vRotationMatrix->rotateY(fXtalAngle.y());
+        vRotationMatrix->rotateZ(fXtalAngle.z());
+        fXtalPhysical =
+            new G4PVPlacement(vRotationMatrix,
+                              G4ThreeVector(0.,0.,0.),
+                              fXtalLogic,"Target",
+                              expHall_log,
+                              false,
+                              0);
+    }
+
+    //----------------------------------------
+    // Create XLogicalLattice
+    //----------------------------------------
+    XLogicalLattice* logicalLattice = new XLogicalLattice();
+    double vScatteringConstant =
+        3.67e-41*CLHEP::second*CLHEP::second*CLHEP::second;
+    logicalLattice->SetScatteringConstant(vScatteringConstant);
+
+    //----------------------------------------
+    // Create XLogicalBase
+    //----------------------------------------
+    XLogicalAtomicLatticeDiamond *diamond_lattice =
+        new XLogicalAtomicLatticeDiamond();
+    G4Element* element = G4NistManager::
+        Instance()->FindOrBuildElement(G4int(fXtalMaterial->GetZ()));
+    XLogicalBase *base = new XLogicalBase(element,diamond_lattice);
+
+    //----------------------------------------
+    // Create XUnitCell
+    //----------------------------------------
+    XUnitCell* myCell = new XUnitCell();
+    myCell->SetSize(fXtalCellSize);
+    myCell->AddBase(base);
+
+    //----------------------------------------
+    // Create XPhysicalLattice
+    //----------------------------------------
+    XPhysicalLattice* physicalLattice =
+        new XPhysicalLattice(fXtalPhysical, logicalLattice);
+    physicalLattice->SetUnitCell(myCell);
+    physicalLattice->SetMillerOrientation(G4int(fXtalMiller.x()),
+                                          G4int(fXtalMiller.y()),
+                                          G4int(fXtalMiller.z()));
+    physicalLattice->SetLatticeOrientation(fXtalAngle.x(),
+                                           fXtalAngle.y(),
+                                           fXtalAngle.z());
+    physicalLattice->SetThermalVibrationAmplitude(fXtalTVA);
+    physicalLattice->SetCurvatureRadius(fXtalCurvatureRadius);
+
+    //----------------------------------------
+    // Register XPhysicalLattice
+    //----------------------------------------
+    if(XLatticeManager3::
+        GetXLatticeManager()->GetXPhysicalLattice(fXtalPhysical)
+        != physicalLattice){
+            XLatticeManager3::
+                GetXLatticeManager()->RegisterLattice(physicalLattice);
+    }
+
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
+
+void AllPixDetectorConstruction::SetXtalMaterial(const G4String& name){
+    G4Material* vMaterial = G4Material::GetMaterial(name, false);
+
+    if(!vMaterial){
+        vMaterial = G4NistManager::Instance()->FindOrBuildMaterial(name);
+    }
+
+    if (vMaterial && vMaterial != fXtalMaterial) {
+        G4cout << "DetectorConstructor::SetXtalMaterial() - New Xtal Material: "
+            << vMaterial->GetName() << G4endl;
+        fXtalMaterial = vMaterial;
+        if(fXtalLogic){
+            fXtalLogic->SetMaterial(vMaterial);
+            G4RunManager::GetRunManager()->PhysicsHasBeenModified();
+        }
+    }
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+G4String AllPixDetectorConstruction::GetXtalMaterial(){
+    if(fXtalMaterial) {
+        return fXtalMaterial->GetName();
+    }
+    return "";
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void AllPixDetectorConstruction::SetXtalCurvatureRadius(G4ThreeVector cr){
+    if(fXtalCurvatureRadius != cr) {
+        G4RunManager::GetRunManager()->GeometryHasBeenModified();
+        fXtalCurvatureRadius = cr;
+    }
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void AllPixDetectorConstruction::SetXtalSize(G4ThreeVector size) {
+    if(fXtalSize != size) {
+        G4RunManager::GetRunManager()->GeometryHasBeenModified();
+        fXtalSize = size;
+    }
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void AllPixDetectorConstruction::SetXtalAngle(G4ThreeVector angle) {
+    if(fXtalAngle != angle) {
+        G4RunManager::GetRunManager()->GeometryHasBeenModified();
+        fXtalAngle = angle;
+    }
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void AllPixDetectorConstruction::SetXtalCellSize(G4ThreeVector cellsize) {
+    if(fXtalCellSize != cellsize) {
+        G4RunManager::GetRunManager()->GeometryHasBeenModified();
+        fXtalCellSize = cellsize;
+    }
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void AllPixDetectorConstruction::SetXtalMiller(G4ThreeVector miller) {
+    if(fXtalMiller != miller) {
+        G4RunManager::GetRunManager()->GeometryHasBeenModified();
+        fXtalMiller = miller;
+    }
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void AllPixDetectorConstruction::SetXtalCellAngle(
+                                            G4ThreeVector cellangle) {
+    if(fXtalCellAngle != cellangle) {
+        G4RunManager::GetRunManager()->GeometryHasBeenModified();
+        fXtalCellAngle = cellangle;
+    }
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void AllPixDetectorConstruction::SetXtalThermalVibrationAmplitude(
+                                            G4double thermvibr) {
+    if(fXtalTVA != thermvibr) {
+        G4RunManager::GetRunManager()->GeometryHasBeenModified();
+        fXtalTVA = thermvibr;
+    }
 }
 

@@ -71,7 +71,7 @@ AllPixTrackerHit::AllPixTrackerHit(const AllPixTrackerHit& right)
 	pdgIdTrack = right.pdgIdTrack;
 	trackVolumeName = right.trackVolumeName;
 	parentVolumeName = right.parentVolumeName;
-	//kinE      = right.kinE;
+    kinEParent      = right.kinEParent;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -92,7 +92,7 @@ const AllPixTrackerHit& AllPixTrackerHit::operator=(const AllPixTrackerHit& righ
 	pdgIdTrack = right.pdgIdTrack;
 	trackVolumeName = right.trackVolumeName;
 	parentVolumeName = right.parentVolumeName;
-	//kinE      = right.kinE;
+    kinEParent      = right.kinEParent;
 	return *this;
 }
 

@@ -30,8 +30,8 @@ public:
 	//void SetupDigitizers(G4String, AllPixGeoDsc *);
 	void SetupDigitizers();
 	G4String GetNewName(G4String, G4String, G4String);
-	G4int GetNumberOfDigitizers() { return m_nDigitizers; };
-	G4int GetNumberOfHC() { return m_nHC; };
+    G4int GetNumberOfDigitizers() { return m_nDigitizers; }
+    G4int GetNumberOfHC() { return m_nHC; }
 
 private:
 

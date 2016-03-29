@@ -70,6 +70,9 @@ using namespace std;
 #include "Randomize.hh"
 
 
+#include "ExExChStackingAction.hh"
+#include "ExExChPhysicsList.hh"
+
 #ifdef G4VIS_USE
 #include "G4VisExecutive.hh"
 #endif
@@ -139,8 +142,9 @@ int main(int argc, char** argv)
 	runManager->SetUserInitialization(detector);
 
     //G4VModularPhysicsList * physics = new AllPixPhysicsList();
-    G4VModularPhysicsList* physics = new FTFP_BERT;
-    physics->RegisterPhysics(new AllPixExtDecayerPhysics());
+    //G4VModularPhysicsList* physics = new FTFP_BERT;
+    G4VModularPhysicsList* physics = new ExExChPhysicsList();
+    //physics->RegisterPhysics(new AllPixExtDecayerPhysics());
     runManager-> SetUserInitialization(physics);
 	// Hits ! --> Ntuple to store hits
 	// creates AllPixRun to analyze hits at the end of event
@@ -151,6 +155,8 @@ int main(int argc, char** argv)
 			"lciobridge_allpix_dut.txt"); // dataset
 	runManager->SetUserAction(run_action);
 
+
+    runManager->SetUserAction(new ExExChStackingAction());
 	// Particle gun
     SourceType st = _GeneralParticleSource;
     for(int i=0;i<argc;i++) {

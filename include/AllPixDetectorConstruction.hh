@@ -42,6 +42,7 @@
 #include "G4Colour.hh"
 #include "G4PVDivision.hh"
 #include "G4VSolid.hh"
+#include "G4RunManager.hh"
 
 #include "AllPixTrackerSD.hh"
 #include "AllPixBumpsParameterization.hh"
@@ -115,7 +116,7 @@ public:
 
   // others
   void SetOutputFilePrefix(G4String);
-  G4String GetOutputFilePrefix(){return m_outputFilePrefix;};
+  G4String GetOutputFilePrefix(){return m_outputFilePrefix;}
 
   G4VSolid * GetVSolidDetector (G4int detId) {
 	  // Check first if the detId is good
@@ -127,6 +128,46 @@ public:
 #ifdef _EUTELESCOPE
 	void SetScintPos(G4ThreeVector);
 #endif
+
+public:
+    void AddXtalTarget() {
+        bXtal = true;
+        G4RunManager::GetRunManager()->GeometryHasBeenModified();
+    };
+    void SetXtalMaterial(const G4String& name);
+    G4String GetXtalMaterial();
+    void SetXtalCurvatureRadius(G4ThreeVector);
+    G4ThreeVector GetXtalCurvatureRadius() {return fXtalCurvatureRadius;}
+    void SetXtalSize(G4ThreeVector);
+    G4ThreeVector GetXtalSize() {return fXtalSize;}
+    void SetXtalAngle(G4ThreeVector);
+    G4ThreeVector GetXtalAngle() {return fXtalAngle;}
+    void SetXtalCellSize(G4ThreeVector);
+    G4ThreeVector GetXtalCellSize() {return fXtalCellSize;}
+    void SetXtalCellAngle(G4ThreeVector);
+    G4ThreeVector GetXtalCellAngle() {return fXtalCellAngle;}
+    void SetXtalThermalVibrationAmplitude(G4double);
+    G4double GetXtalThermalVibrationAmplitude() {return fXtalTVA;}
+    void SetXtalMiller(G4ThreeVector);
+    G4ThreeVector GetXtalMiller() {return fXtalMiller;}
+
+private:
+    void ConstructXtalTarget();
+    G4bool bXtal;
+
+    G4ThreeVector fXtalCurvatureRadius;
+
+    G4Material* fXtalMaterial;
+    G4ThreeVector fXtalAngle;
+    G4ThreeVector fXtalSize;
+    G4ThreeVector fXtalCellSize;
+    G4ThreeVector fXtalCellAngle;
+    G4ThreeVector fXtalMiller;
+    G4double fXtalTVA;
+
+    G4VSolid* fXtalSolid;
+    G4LogicalVolume* fXtalLogic;
+    G4VPhysicalVolume* fXtalPhysical;
 
 public:
 

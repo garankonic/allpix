@@ -170,7 +170,7 @@ G4bool AllPixTrackerSD::ProcessHits(G4Step * aStep, G4TouchableHistory *)
 	// Isolate the information of the incoming particle when doing the first hit in the SD
 	//G4cout << aParticle->GetPDGEncoding() << G4endl;
 
-	if ( aTrack->GetTrackID() == 1 && ! firstStrikePrimary ) {
+    if ( aTrack->GetTrackID() == 1 && !firstStrikePrimary ) {
 		_kinEPrimary = aTrack->GetKineticEnergy()/keV;
 		_kinEPrimary -= (aStep->GetDeltaEnergy()/keV);
 		firstStrikePrimary = true;

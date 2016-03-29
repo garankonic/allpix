@@ -40,6 +40,7 @@ class G4UIcmdWithoutParameter;
 class G4UIcmdWith3VectorAndUnit;
 class G4UIcmdWithADoubleAndUnit;
 class G4UIcmdWithAString;
+class G4UIcmdWith3Vector;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -85,6 +86,17 @@ private:
   G4UIcmdWithADoubleAndUnit * m_StepLengthSensor;
 
   G4UIcmdWithoutParameter   * m_UpdateCmd;
+
+  G4UIdirectory* fMyXtalDirectory;
+  G4UIcmdWithAString*  fXtalMaterialCmd;
+  G4UIcmdWith3VectorAndUnit* fXtalCurvatureRadiusCmd;
+  G4UIcmdWith3VectorAndUnit* fXtalSizeCmd;
+  G4UIcmdWith3VectorAndUnit* fXtalAngleCmd;
+  G4UIcmdWith3VectorAndUnit* fXtalCellSizeCmd;
+  G4UIcmdWith3VectorAndUnit* fXtalCellAngleCmd;
+  G4UIcmdWithADoubleAndUnit* fXtalCellThermalVibration;
+  G4UIcmdWith3Vector* fXtalMillerCmd;
+  G4UIcmdWithAString*  fAddXtal;
 
 #ifdef _EUTELESCOPE
 	// Specific EUTelescope

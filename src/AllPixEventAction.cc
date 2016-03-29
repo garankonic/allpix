@@ -12,6 +12,8 @@
 // geometry
 #include "ReadGeoDescription.hh"
 
+#include "ExExChAnalysis.hh"
+
 AllPixEventAction::AllPixEventAction(AllPixRunAction* run){
 
 	m_run_action = run;

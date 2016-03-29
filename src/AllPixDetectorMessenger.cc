@@ -40,6 +40,7 @@
 #include "G4UIcmdWithoutParameter.hh"
 #include "G4UIcmdWith3VectorAndUnit.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
+#include "G4UIcmdWith3Vector.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -203,6 +204,83 @@ AllPixDetectorMessenger::AllPixDetectorMessenger(
 	m_magFieldCmd->SetUnitCategory("Magnetic flux density");
 	m_magFieldCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+    fMyXtalDirectory = new G4UIdirectory("/xtal/");
+    fMyXtalDirectory->SetGuidance("Xtal setup control commands.");
+
+    fXtalMaterialCmd = new G4UIcmdWithAString("/xtal/setMaterial",
+                                              this);
+    fXtalMaterialCmd->SetGuidance("Set Xtal material.");
+    fXtalMaterialCmd->SetParameterName("xMat",true);
+    fXtalMaterialCmd->SetDefaultValue("G4_Si");
+
+    fXtalCurvatureRadiusCmd =
+        new G4UIcmdWith3VectorAndUnit("/xtal/setCurvRadius",this);
+    fXtalCurvatureRadiusCmd->SetGuidance("Set Xtal curvature radius.");
+    fXtalCurvatureRadiusCmd->SetParameterName("xtalcrx",
+                                              "xtalcry",
+                                              "xtalcrz",
+                                              true);
+    fXtalCurvatureRadiusCmd->SetDefaultValue(G4ThreeVector(0.,0.,0.));
+    fXtalCurvatureRadiusCmd->SetDefaultUnit("m");
+
+    fXtalSizeCmd = new G4UIcmdWith3VectorAndUnit("/xtal/setSize",this);
+    fXtalSizeCmd->SetGuidance("Set Xtal size.");
+    fXtalSizeCmd->SetParameterName("xtalSizeX",
+                                   "xtalSizeY",
+                                   "xtalSizeZ",
+                                   true);
+    fXtalSizeCmd->SetDefaultValue(G4ThreeVector(6.,2.,6.));
+    fXtalSizeCmd->SetDefaultUnit("mm");
+
+    fXtalAngleCmd = new G4UIcmdWith3VectorAndUnit("/xtal/setAngle",this);
+    fXtalAngleCmd->SetGuidance("Set Xtal angles in the world.");
+    fXtalAngleCmd->SetParameterName("xtalAngleX",
+                                    "xtalAngleY",
+                                    "xtalAngleZ",
+                                    true);
+    fXtalAngleCmd->SetDefaultValue(G4ThreeVector(0.,0.,0.));
+    fXtalAngleCmd->SetDefaultUnit("rad");
+
+    fXtalCellSizeCmd = new G4UIcmdWith3VectorAndUnit("/xtal/setCellSize",this);
+    fXtalCellSizeCmd->SetGuidance("Set Xtal cell size.");
+    fXtalCellSizeCmd->SetParameterName("xtalCellSizeX",
+                                       "xtalCellSizeY",
+                                       "xtalCellSizeZ",
+                                       true);
+    fXtalCellSizeCmd->SetDefaultValue(G4ThreeVector(5.431,5.431,5.431));
+    fXtalCellSizeCmd->SetDefaultUnit("angstrom");
+
+    fXtalCellAngleCmd =
+        new G4UIcmdWith3VectorAndUnit("/xtal/setCellAngle",this);
+    fXtalCellAngleCmd->SetGuidance("Set Xtal cell angles in the world.");
+    fXtalCellAngleCmd->SetParameterName("xtalCellAngleX",
+                                        "xtalCellAngleY",
+                                        "xtalCellAngleZ",
+                                        true);
+    fXtalCellAngleCmd->SetDefaultValue(G4ThreeVector(90.,90.,90.));
+    fXtalCellAngleCmd->SetDefaultUnit("deg");
+
+    fXtalCellThermalVibration =
+        new G4UIcmdWithADoubleAndUnit("/xtal/setThermVibr",this);
+    fXtalCellThermalVibration->SetGuidance("Thermal vibration amplitude");
+    fXtalCellThermalVibration->SetParameterName("xtalThermVibr",true);
+    fXtalCellThermalVibration->SetDefaultValue(0.075);
+    fXtalCellThermalVibration->SetDefaultUnit("angstrom");
+
+    fXtalMillerCmd = new G4UIcmdWith3Vector("/xtal/setMiller",this);
+    fXtalMillerCmd->SetGuidance("Set Miller Indexes");
+    fXtalMillerCmd->SetParameterName("xtalMiller1",
+                                     "xtalMiller2",
+                                     "xtalMiller3",
+                                     true);
+    fXtalMillerCmd->SetDefaultValue(G4ThreeVector(2,2,0));
+
+    fAddXtal = new G4UIcmdWithAString("/addxtal",this);
+    fAddXtal->SetGuidance("Add Xtal.");
+    fAddXtal->SetParameterName("addxtal",true);
+
+
+
 #ifdef _EUTELESCOPE
 	// Specific EUTelescope
 	m_scint1PosCmd = new G4UIcmdWith3VectorAndUnit("/allpix/eudet/scint1Pos", this);
@@ -231,6 +309,15 @@ AllPixDetectorMessenger::~AllPixDetectorMessenger()
 	delete m_detDir;
 	delete m_allpixDir;
 	delete m_ROOTDir;
+
+    delete fXtalMaterialCmd;
+    delete fXtalMillerCmd;
+    delete fXtalCurvatureRadiusCmd;
+    delete fXtalSizeCmd;
+    delete fXtalAngleCmd;
+    delete fXtalCellSizeCmd;
+    delete fXtalCellAngleCmd;
+    delete fAddXtal;
 
 
 #ifdef _EUTELESCOPE
@@ -358,6 +445,37 @@ void AllPixDetectorMessenger::SetNewValue(G4UIcommand* command, G4String newValu
 				m_StepLengthSensor->GetNewDoubleValue(newValue)
 		);
 	}
+    if(command==fXtalMaterialCmd ){
+        m_AllPixDetector->SetXtalMaterial(newValue);
+    }
+    if(command==fXtalCurvatureRadiusCmd ){
+        m_AllPixDetector->SetXtalCurvatureRadius(
+                        fXtalCurvatureRadiusCmd->GetNew3VectorValue(newValue));
+    }
+    if(command==fXtalSizeCmd ){
+        m_AllPixDetector->SetXtalSize(fXtalSizeCmd->GetNew3VectorValue(newValue));
+    }
+    if(command==fXtalAngleCmd ){
+        m_AllPixDetector->SetXtalAngle(fXtalAngleCmd->GetNew3VectorValue(newValue));
+    }
+    if(command==fXtalCellSizeCmd ){
+        m_AllPixDetector->SetXtalCellSize(
+                        fXtalCellSizeCmd->GetNew3VectorValue(newValue));
+    }
+    if(command==fXtalCellAngleCmd ){
+        m_AllPixDetector->SetXtalCellAngle(
+                        fXtalCellAngleCmd->GetNew3VectorValue(newValue));
+    }
+    if(command==fXtalCellThermalVibration ){
+        m_AllPixDetector->SetXtalThermalVibrationAmplitude(
+                        fXtalCellThermalVibration->GetNewDoubleValue(newValue));
+    }
+    if(command==fXtalMillerCmd ){
+        m_AllPixDetector->SetXtalMiller(fXtalMillerCmd->GetNew3VectorValue(newValue));
+    }
+    if(command==fAddXtal ){
+        m_AllPixDetector->AddXtalTarget();
+    }
 
 #ifdef _EUTELESCOPE
 	if( command == m_scint1PosCmd )

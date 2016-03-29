@@ -74,6 +74,8 @@ void AllPixExtDecayerPhysics::ConstructProcess()
 /// to all decay processes if External decayer is set
 
   // Create Geant4 external decayer
+
+    G4cout<<"!!!! Construct external physics!\n";
   G4Pythia8Decayer* extDecayer = new G4Pythia8Decayer();
   extDecayer->SetVerboseLevel(1);
      // The extDecayer will be deleted in G4Decay destructor
